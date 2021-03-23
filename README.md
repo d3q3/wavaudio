@@ -1,3 +1,34 @@
 # wavaudio
 
-playback of audio files (wav-files only) in C# using the winmm.dll library. 
+Playback of in memory audio.
+There are two projects. The main project WavOutLib uses the winmm.dll library to
+create the class WavOutPlayer. The second project TestWavOut has 
+a 'test-program' with a form Form1 and a file wavFile.cs. 
+
+## testform
+
+The layout of the form is as follows:
+![](./testform.jpg)
+
+In the Init() an object of class WavOutPlayer is created and the listbox is filled
+with available output devices.
+
+In the Open() a wav file (Toccata-and-fugue-Short.wav) is opened. The format information of the wav-file is used
+to create the format for the output device (stereo/mono, bitcount in encoding, samples/second), and this is passed
+when creating a handle to one of the available output devices.
+
+It is possible to Pause() and Restart() the audio.
+
+And it is possible to Reset() the audio. After that we can restart at with another tune without closing the device.
+
+
+## using the WavOutPlayer class
+
+The wavOutPlayer uses a number of buffers that must be filled with audio-bytes. When playing one buffer it will try to fill the other buffers at the same time. In the example test program we made the following choices:
+
+* const int HeaderCount = 6; This means that we use 6 buffers in the player
+* dataProvider = new LoopedDataProvider(...); This means that we use a LoopDataProvider to fille the buffers. In a WavOutPlayer we use a subclass of BufferDataProvider to fill the buffers of the player. A loopDataProvider will loop between a startFrame and an EndFrame. 
+* new LoopedDataProvider(..., 2200 ,...); this means that the buffers have a size of 2200 frames
+
+Do not make the number of buffers too small or the length of the buffers too small. On my laptop I had (Count_of_buffers - 1)x(Buffer_Size) must be greater than 900. So, there are limits. With 6 buffers and the rather small buffer size of 2200 frames my laptop played the Toccata for 3 hours without a problem.
+
