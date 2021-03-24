@@ -33,3 +33,8 @@ The wavOutPlayer uses a number of buffers that must be filled with audio-bytes. 
 
 Do not make the number of buffers too small or the length of the buffers too small. On my laptop I had (Count_of_buffers - 1) x (Buffer_Size) must be greater than 900. So, there are limits. With 6 buffers and the rather small buffer size of 2200 frames my laptop played the Toccata for 3 hours without a problem.
 
+
+## other sound APIs
+
+When it is important to have low latency then other window API's come to the rescue. The Core Audio APIs were introduced in Windows Vista and there are other API's build on top of the Core Audio APIs. [more information](https://docs.microsoft.com/en-gb/windows/win32/coreaudio/about-the-windows-core-audio-apis)
+
