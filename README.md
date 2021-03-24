@@ -36,5 +36,5 @@ Do not make the number of buffers too small or the length of the buffers too sma
 
 ## other sound APIs
 
-When it is important to have low latency then other window API's come to the rescue. The Core Audio APIs were introduced in Windows Vista and there are other API's build on top of the Core Audio APIs. [more information](https://docs.microsoft.com/en-gb/windows/win32/coreaudio/about-the-windows-core-audio-apis)
+When it is important to have low latency then other window API's come to the rescue. The Core Audio APIs were introduced in Windows Vista (they will not be supported on XP and lower versions) and other API's were built on top of these Core Audio APIs... [more information](https://docs.microsoft.com/en-gb/windows/win32/coreaudio/about-the-windows-core-audio-apis)
 
