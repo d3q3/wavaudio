@@ -1,9 +1,14 @@
 # wavaudio
 
 Playback of in memory audio.
-There are two projects. The main project WavOutLib uses the winmm.dll library to
-create the library with the class WavOutPlayer. The second project TestWavOut has 
-a 'test-program' with a form Form1 and a file wavFile.cs. 
+There are three projects. Project Wav is made to read (Microsoft) wav-files. Project WavOutLib uses the winmm.dll library to
+create a library with the class WavOutPlayer. The project TestWavOut has a 'test-program' with a form Form1 and a file wavFile.cs. 
+
+## project Wav
+
+A wav-file can be read. It can be written. And a Convert method is added to convert between 16, 24 and float encodings. A class
+Framereader is added to make it easy to think in terms of frames and not in terms of bytes. The testform uses the Wav class
+to read sound from file.
 
 ## testform
 
