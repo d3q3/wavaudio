@@ -20,32 +20,32 @@ namespace WavOutLib
         /// <summary>
         /// if PCM == 1.
         /// </summary>
-        public short wFormatTag;
+        public short AudioFormat;
         /// <summary>
         /// mono or stereo.
         /// </summary>
-        public short nChannels;
+        public short NumChannels;
         /// <summary>
         /// samples per second (hertz).
         /// </summary>
-        public int nSamplesPerSec;
+        public int SampleRate;
         /// <summary>
         /// if PCM nAvgBytesPerSec should be equal to the product of nSamplesPerSec and nBlockAlign.
         /// </summary>
-        public int nAvgBytesPerSec;
+        public int ByteRate;
         /// <summary>
         /// if PCM nBlockAlign must be equal to the product of nChannels and wBitsPerSample divided by 8 
         /// </summary>
-        public short nBlockAlign;
+        public short BlockAlign;
         /// <summary>
         /// if PCM, then wBitsPerSample should be equal to 8 or 16. (D3Q: 24 not permitted; experimenting shows 
         /// that there is no problem...)
         /// </summary>
-        public short wBitsPerSample;
+        public short BitsPerSample;
         /// <summary>
         /// Size, in bytes, of extra format information appended to the end of the WAVEFORMATEX structure.
         /// </summary>
-        public short cbSize;
+        public short XtraBytes;
     }
 
     /// <summary>
@@ -533,13 +533,13 @@ namespace WavOutLib
         public WaveFormatEx createWaveOutFormat(int sampleFrequency, int bitsPerSample, int channels)
         {
             WaveFormatEx waveFormat = new WaveFormatEx();
-            waveFormat.wFormatTag = (short)1;
-            waveFormat.nAvgBytesPerSec = (int)(sampleFrequency * (bitsPerSample / 8) * channels);
-            waveFormat.nBlockAlign = (short)(channels * (bitsPerSample / 8));
-            waveFormat.nChannels = (short)channels;
-            waveFormat.nSamplesPerSec = (int)sampleFrequency;
-            waveFormat.wBitsPerSample = (short)bitsPerSample;
-            waveFormat.cbSize = 0;
+            waveFormat.AudioFormat = (short)1;
+            waveFormat.ByteRate = (int)(sampleFrequency * (bitsPerSample / 8) * channels);
+            waveFormat.BlockAlign = (short)(channels * (bitsPerSample / 8));
+            waveFormat.NumChannels = (short)channels;
+            waveFormat.SampleRate = (int)sampleFrequency;
+            waveFormat.BitsPerSample = (short)bitsPerSample;
+            waveFormat.XtraBytes = 0;
             return waveFormat;
         }
 
