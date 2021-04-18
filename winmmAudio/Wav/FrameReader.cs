@@ -14,7 +14,7 @@ namespace D3Q.WavFile
         int maxInt;
         public int FrameCount;
         byte[] dataBytes;
-        int currentFrame;
+        public int CurrentFrame;
 
         public FrameReader(DataSubChunk dataChunk)
         {
@@ -25,12 +25,12 @@ namespace D3Q.WavFile
             bytesInFrame = channelCount * bytesInValue;
             dataBytes = dataChunk.DataBytes;
             FrameCount = dataBytes.Length / bytesInFrame;
-            currentFrame = 0;
+            CurrentFrame = 0;
         }
 
         public void Start(int frameNumber)
         {
-            currentFrame = frameNumber;
+            CurrentFrame = frameNumber;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace D3Q.WavFile
         /// <returns>the float array of the next frame, one float fro each channel</returns>
         public float[] ReadNext()
         {
-            int currentByte = currentFrame * bytesInFrame;
+            int currentByte = CurrentFrame * bytesInFrame;
 
             float[] res = new float[channelCount];
 
@@ -65,7 +65,7 @@ namespace D3Q.WavFile
                 currentByte += bytesInValue;
             }
 
-            currentFrame += 1;
+            CurrentFrame += 1;
             return res;
         }
 
@@ -79,14 +79,14 @@ namespace D3Q.WavFile
         public byte[] ReadNextFramesCopied(int frameRequested, out int framesCopied)
         {
             framesCopied = frameRequested;
-            if (currentFrame + frameRequested > FrameCount) framesCopied = FrameCount - currentFrame;
+            if (CurrentFrame + frameRequested > FrameCount) framesCopied = FrameCount - CurrentFrame;
             
             int byteCount = framesCopied * bytesInFrame;
             byte[] buffer = new byte[byteCount];
 
-            int currentByte = currentFrame * bytesInFrame;
+            int currentByte = CurrentFrame * bytesInFrame;
             Array.Copy(dataBytes, currentByte, buffer, 0, byteCount);
-            currentFrame += frameRequested;
+            CurrentFrame += frameRequested;
             return buffer;
         }
 
@@ -102,14 +102,32 @@ namespace D3Q.WavFile
         public byte[] ReadNextFrames(int frameRequested, out int framesCopied, out int firstByte, out int byteCount)
         {
             framesCopied = frameRequested;
-            if (currentFrame + frameRequested > FrameCount) framesCopied = FrameCount - currentFrame;
+            if (CurrentFrame + frameRequested > FrameCount) framesCopied = FrameCount - CurrentFrame;
 
-            firstByte = currentFrame * bytesInFrame;
+            firstByte = CurrentFrame * bytesInFrame;
             byteCount = framesCopied * bytesInFrame;
 
-            currentFrame += frameRequested;
+            CurrentFrame += frameRequested;
             return dataBytes;
         }
+
+        //    /// <summary>
+        //    /// D3Q: gets all the frames from the beginning. Current is updated!
+        //    /// The result is as byte[], so no conversion to floats
+        //    /// </summary>
+        //    /// <param name="frameRequested"></param>
+        //    /// <param name="framesCopied">When reaching the end of frames this will be less than framesRequested</param>
+        //    /// <param name="firstByte">start byte for the frame series</param>
+        //    /// <param name="byteCount">count of bytes in the frame series</param>
+        //    /// <returns>source buffer in DataChunk holding the series of frames</returns>
+        //    public byte[] ReadAllFrames(out int byteCount)
+        //    {
+        //        byteCount = this.FrameCount * bytesInFrame;
+
+        //        currentFrame += FrameCount;
+        //        return dataBytes;
+        //    }
+
     }
 }
 
