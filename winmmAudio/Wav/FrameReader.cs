@@ -2,6 +2,9 @@
 
 namespace D3Q.WavFile
 {
+    /// <summary>
+    /// D3Q: Reader to simplify reading frames
+    /// </summary>
     public class FrameReader
     {
         int channelCount;
@@ -67,19 +70,45 @@ namespace D3Q.WavFile
         }
 
         /// <summary>
-        /// D3Q: Copies frameCount frames into the offered Buffer. Current is updated.
+        /// D3Q: Copies the frameRequested frames after currentFrame. Current is updated.
+        /// The result is in byte[], so no conversion to floats
         /// </summary>
-        /// <param name="Buffer">an already created byte buffer</param>
-        /// <param name="frameCount">count of frames asked for</param>
-        /// <returns>number of frames actually copied</returns>
-        public int ReadNextFramesCopied(ref byte[] Buffer, int frameCount)
+        /// <param name="framesRequested"></param>
+        /// <param name="framesCopied">When reaching the end of frames this will be less than framesRequested</param>
+        /// <returns>buffer with the copied bytes of the requested frames</returns>
+        public byte[] ReadNextFramesCopied(int frameRequested, out int framesCopied)
         {
-            if (currentFrame + frameCount > FrameCount) frameCount = FrameCount - currentFrame;
-            int byteCount = frameCount * bytesInFrame;
+            framesCopied = frameRequested;
+            if (currentFrame + frameRequested > FrameCount) framesCopied = FrameCount - currentFrame;
+            
+            int byteCount = framesCopied * bytesInFrame;
+            byte[] buffer = new byte[byteCount];
+
             int currentByte = currentFrame * bytesInFrame;
-            Array.Copy(dataBytes, currentByte, Buffer, 0, byteCount);
-            currentFrame += frameCount;
-            return frameCount;
+            Array.Copy(dataBytes, currentByte, buffer, 0, byteCount);
+            currentFrame += frameRequested;
+            return buffer;
+        }
+
+        /// <summary>
+        /// D3Q: gets the frameRequested frames after currentFrame. Current is updated.
+        /// The result is in byte[], so no conversion to floats
+        /// </summary>
+        /// <param name="frameRequested"></param>
+        /// <param name="framesCopied">When reaching the end of frames this will be less than framesRequested</param>
+        /// <param name="firstByte">start byte for the frame series</param>
+        /// <param name="byteCount">count of bytes in the frame series</param>
+        /// <returns>source buffer in DataChunk holding the series of frames</returns>
+        public byte[] ReadNextFrames(int frameRequested, out int framesCopied, out int firstByte, out int byteCount)
+        {
+            framesCopied = frameRequested;
+            if (currentFrame + frameRequested > FrameCount) framesCopied = FrameCount - currentFrame;
+
+            firstByte = currentFrame * bytesInFrame;
+            byteCount = framesCopied * bytesInFrame;
+
+            currentFrame += frameRequested;
+            return dataBytes;
         }
     }
 }

@@ -73,7 +73,7 @@ namespace D3Q.WavFile
         /// D3Q: used for writing ChunNames
         /// </summary>
         /// <returns></returns>
-        public void WriteNameBytes(FileStream wavFileStream, string name)
+        protected void WriteNameBytes(FileStream wavFileStream, string name)
         {
             byte[] bytes = new UTF8Encoding(true).GetBytes(name);
             wavFileStream.Write(bytes, 0, 4);
@@ -88,7 +88,7 @@ namespace D3Q.WavFile
             return BitConverter.ToInt16(bytes, 0);
         }
 
-        public void WriteInt32bBytes(FileStream wavFileStream, int byte4)
+        protected void WriteInt32bBytes(FileStream wavFileStream, int byte4)
         {
             wavFileStream.Write(BitConverter.GetBytes(byte4), 0, 4);
         }
@@ -98,12 +98,11 @@ namespace D3Q.WavFile
             wavFileStream.Write(BitConverter.GetBytes(byte2), 0, 2);
         }
 
-        public void WriteXtraBytes(FileStream wavFileStream, byte[] bytes, int count)
+        protected void WriteXtraBytes(FileStream wavFileStream, byte[] bytes, int count)
         {
             wavFileStream.Write(bytes, 0, count);
         }
 
-        
         /// <summary>
         /// D3Q: sometimes skip bytes when a chunksize is larger than the size of the used fields
         /// </summary>

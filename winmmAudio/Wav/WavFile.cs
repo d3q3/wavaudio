@@ -34,7 +34,7 @@ namespace D3Q.WavFile
             FmtChunk = new FmtSubChunk(numChannels, sampleRate, bitsPerSample);
             //SmplChunk = new SmplSubChunk();
             OtherChunks = new List<OtherChunk>();
-            updateRiffSize();
+            updateWithOthers();
         }
 
         /// <summary>
@@ -76,6 +76,7 @@ namespace D3Q.WavFile
         {
             using (FileStream wavFileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
+                if (skipOthers) updateRiffSize();
                 riffChunk.Write(wavFileStream);
                 if (FmtChunk == null)
                 {
@@ -93,36 +94,45 @@ namespace D3Q.WavFile
             }
         }
 
+        /// <summary>
+        /// D3Q: updates the Size field in the RIFF chunk using the Size of the FmtChunk and the DataChunk only.
+        /// Used when a Wav file is saved with only these two subchunks.
+        /// </summary>
         private void updateRiffSize()
         {
             riffChunk.Size = 4;
             if (FmtChunk != null) riffChunk.Size += 8 + FmtChunk.Size;
-            if (SmplChunk != null) riffChunk.Size += 8 + SmplChunk.Size;
+            //if (SmplChunk != null) riffChunk.Size += 8 + SmplChunk.Size;
             if (DataChunk != null) riffChunk.Size += 8 + DataChunk.Size;
         }
 
+        /// <summary>
+        /// D3Q: updates the Size field in the RIFF chunk using the size of all chunks
+        /// </summary>
         private void updateWithOthers()
         {
             updateRiffSize();
             OtherChunks.ForEach((chunk) => { riffChunk.Size += chunk.Size + 8; });
         }
 
-        public int FrameRate { get { return FmtChunk.fmtSampleRate; } }
-
         /// <summary>
-        /// sets the chunk sizes so that it seems the bytes are deleted
+        /// deletes all frames after a given frame and updates the Size field in the RIFF chunk
         /// </summary>
         public void deleteAfterFrame(int frame)
         {
             DataChunk.DeleteAfterFrame(frame);
-            updateRiffSize();
+            updateWithOthers();
         }
 
-        public void Convert(int toBitsPerSample)
+        /// <summary>
+        /// Converts the contents in the DataCunk to a new series of samples having toBitsPerChannel bits.
+        /// </summary>
+        /// <param name="toBitsPerChannel">A value of 16, 24 or 32. When 32 the channels have float values</param>
+        public void Convert(int toBitsPerChannel)
         {
-            DataChunk.ConvertBytes(toBitsPerSample);
-            FmtChunk.SetBitsPerSample(toBitsPerSample);
-            updateRiffSize();
+            DataChunk.ConvertBytes(toBitsPerChannel);
+            FmtChunk.SetBitsPerSample(toBitsPerChannel);
+            updateWithOthers();
         }
 
         /// <summary>
@@ -134,7 +144,10 @@ namespace D3Q.WavFile
             return new FrameReader(DataChunk);
         }
 
-        // TODO: adding to a wavfile
+        public int FrameRate { get { return FmtChunk.fmtSampleRate; } }
+        public int BitsPerChannel { get { return FmtChunk.fmtBitsPerSample; } }
+
+        // TODO: adding/inserting to a wavfile
 
     }
 
